@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ — AIMed 2026 | ResUNet-SE Edge Deployment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c1929;
+  --bg-card: #122240;
+  --bg-card-hover: #172d52;
+  --bg-surface: #0f1e38;
+  --blue-1: #1e3a5f;
+  --blue-2: #2563eb;
+  --blue-3: #3b82f6;
+  --blue-4: #60a5fa;
+  --blue-5: #93c5fd;
+  --warm-1: #f59e0b;
+  --warm-2: #fbbf24;
+  --green-1: #10b981;
+  --green-2: #34d399;
+  --red-1: #ef4444;
+  --text: #e2e8f0;
+  --text-dim: #94a3b8;
+  --text-bright: #f8fafc;
+  --border: rgba(59, 130, 246, 0.15);
+  --border-active: rgba(59, 130, 246, 0.4);
+  --glow: rgba(59, 130, 246, 0.08);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--blue-1) var(--bg);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== BACKGROUND GRADIENT ===== */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(37, 99, 235, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===== HERO ===== */
+.hero {
+  position: relative;
+  z-index: 1;
+  padding: 60px 24px 40px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.06) 0%, transparent 100%);
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--warm-2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.hero-badge::before { content: '\2605'; }
+
+.hero h1 {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--text-bright);
+  max-width: 800px;
+  margin: 0 auto 12px;
+  letter-spacing: -0.02em;
+}
+
+.hero h1 span { color: var(--blue-4); }
+
+.hero-sub {
+  font-size: 15px;
+  color: var(--text-dim);
+  max-width: 640px;
+  margin: 0 auto 24px;
+  line-height: 1.5;
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.hero-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hero-meta-item svg { flex-shrink: 0; }
+
+/* ===== STATS BAR ===== */
+.stats-bar {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.stat-item {
+  background: var(--bg-surface);
+  padding: 20px 24px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--blue-4);
+  line-height: 1;
+}
+
+.stat-value.gold { color: var(--warm-2); }
+.stat-value.green { color: var(--green-2); }
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* ===== MAIN CONTAINER ===== */
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+/* ===== SEARCH ===== */
+.search-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 16px 0;
+  background: linear-gradient(var(--bg) 60%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-box svg {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 14px 16px 14px 46px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-bright);
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input::placeholder { color: var(--text-dim); }
+.search-input:focus {
+  border-color: var(--blue-3);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.search-count {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ===== FILTER CHIPS ===== */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-dim);
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.chip:hover {
+  border-color: var(--border-active);
+  color: var(--text);
+  background: var(--bg-card-hover);
+}
+
+.chip.active {
+  border-color: var(--blue-3);
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--blue-4);
+}
+
+.chip .count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: rgba(255,255,255,0.06);
+  padding: 1px 6px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.chip.active .count {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+/* ===== CATEGORY COLORS ===== */
+[data-cat="dataset"] .cat-dot { background: #8b5cf6; }
+[data-cat="model"] .cat-dot { background: var(--blue-3); }
+[data-cat="results"] .cat-dot { background: var(--green-1); }
+[data-cat="deployment"] .cat-dot { background: var(--warm-1); }
+[data-cat="context"] .cat-dot { background: #ec4899; }
+[data-cat="quickfire"] .cat-dot { background: var(--red-1); }
+
+.cat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ===== SECTION HEADERS ===== */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 40px 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-header:first-of-type { margin-top: 24px; }
+
+.section-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.section-header[data-cat="dataset"] .section-icon { background: rgba(139, 92, 246, 0.15); }
+.section-header[data-cat="model"] .section-icon { background: rgba(59, 130, 246, 0.15); }
+.section-header[data-cat="results"] .section-icon { background: rgba(16, 185, 129, 0.15); }
+.section-header[data-cat="deployment"] .section-icon { background: rgba(245, 158, 11, 0.15); }
+.section-header[data-cat="context"] .section-icon { background: rgba(236, 72, 153, 0.15); }
+.section-header[data-cat="quickfire"] .section-icon { background: rgba(239, 68, 68, 0.15); }
+
+.section-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: -0.01em;
+}
+
+.section-header .section-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-left: auto;
+}
+
+/* ===== FAQ CARDS ===== */
+.faq-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.faq-card:hover {
+  border-color: var(--border-active);
+}
+
+.faq-card.open {
+  border-color: var(--blue-3);
+  box-shadow: 0 4px 24px rgba(37, 99, 235, 0.08);
+}
+
+.faq-q {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.faq-q:hover { background: var(--bg-card-hover); }
+
+.faq-q .q-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--blue-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 1px;
+}
+
+.faq-q h3 {
+  flex: 1;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text-bright);
+  line-height: 1.45;
+}
+
+.faq-q .chevron {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--text-dim);
+  transition: transform 0.25s ease;
+  margin-top: 3px;
+}
+
+.faq-card.open .faq-q .chevron { transform: rotate(180deg); }
+
+.faq-a {
+  display: none;
+  padding: 0 20px 20px 58px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.faq-card.open .faq-a { display: block; }
+
+.faq-a p { margin-bottom: 12px; }
+.faq-a p:last-child { margin-bottom: 0; }
+
+.faq-a strong { color: var(--text-bright); font-weight: 600; }
+
+.faq-a blockquote {
+  border-left: 3px solid var(--blue-3);
+  padding: 12px 16px;
+  margin: 12px 0;
+  background: rgba(59, 130, 246, 0.06);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-style: italic;
+  color: var(--blue-5);
+  font-size: 13px;
+}
+
+.faq-a code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  background: rgba(255,255,255,0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--blue-5);
+}
+
+.faq-a pre {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  overflow-x: auto;
+  margin: 12px 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.faq-a pre code {
+  background: none;
+  padding: 0;
+  color: var(--blue-5);
+}
+
+/* ===== TABLES ===== */
+.faq-a table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 12.5px;
+}
+
+.faq-a th {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--blue-4);
+  font-weight: 600;
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+}
+
+.faq-a td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--text);
+}
+
+.faq-a tr:last-child td { border-bottom: none; }
+
+.faq-a tbody tr:hover td { background: rgba(59, 130, 246, 0.04); }
+
+.faq-a .highlight-row td {
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+/* ===== LISTS ===== */
+.faq-a ul, .faq-a ol {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.faq-a li {
+  margin-bottom: 4px;
+}
+
+/* ===== CITATION ===== */
+.citation {
+  font-size: 12px;
+  color: var(--text-dim);
+  border-left: 2px solid var(--blue-1);
+  padding-left: 10px;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  display: none;
+}
+
+.empty-state.visible { display: block; }
+
+.empty-state svg {
+  color: var(--text-dim);
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  color: var(--text-dim);
+  font-size: 15px;
+}
+
+/* ===== FOOTER ===== */
+.page-footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 32px 24px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.page-footer a {
+  color: var(--blue-4);
+  text-decoration: none;
+}
+
+.page-footer a:hover { text-decoration: underline; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+  .hero { padding: 40px 16px 28px; }
+  .container { padding: 20px 16px 60px; }
+  .faq-a { padding-left: 20px; }
+  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  .hero-meta { flex-direction: column; align-items: center; gap: 8px; }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.faq-card { animation: fadeIn 0.3s ease forwards; }
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="hero-badge">Shortlisted for Best Paper Award</div>
+  <h1>Deploying <span>ResUNet-SE</span> for 3D Cardiovascular Segmentation on Low-Cost Edge Devices</h1>
+  <p class="hero-sub">Comprehensive FAQ for poster defense &mdash; Abstract #78, AIMed 2026</p>
+  <div class="hero-meta">
+    <span class="hero-meta-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      ICE Congress Centre, Krak&oacute;w, Poland
+    </span>
+    <span class="hero-meta-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      7&ndash;9 May 2026
+    </span>
+    <span class="hero-meta-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      Khan Umair, Sahin, Yilmaz, Josephin, K&ouml;se, Piskin
+    </span>
+  </div>
+</header>
+
+<!-- ===== STATS BAR ===== -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-value gold">0.911</div>
+    <div class="stat-label">Mean FG Dice</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value green">0%</div>
+    <div class="stat-label">Accuracy Loss on Edge</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value">$80</div>
+    <div class="stat-label">Cheapest Device (Pi 5)</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value">320ms</div>
+    <div class="stat-label">Jetson GPU Latency</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value green">9.2&times;</div>
+    <div class="stat-label">ONNX Speedup on Pi</div>
+  </div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div class="container">
+
+  <!-- SEARCH + FILTERS -->
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search questions... (e.g. ONNX, Dice, thermal, SE)">
+      <span class="search-count" id="searchCount"></span>
+    </div>
+    <div class="filters" id="filters">
+      <button class="chip active" data-filter="all"><span class="cat-dot" style="background:var(--blue-3)"></span>All<span class="count" id="countAll"></span></button>
+      <button class="chip" data-filter="dataset"><span class="cat-dot"></span>Dataset<span class="count" id="countDataset"></span></button>
+      <button class="chip" data-filter="model"><span class="cat-dot"></span>Model<span class="count" id="countModel"></span></button>
+      <button class="chip" data-filter="results"><span class="cat-dot"></span>Results<span class="count" id="countResults"></span></button>
+      <button class="chip" data-filter="deployment"><span class="cat-dot"></span>Deployment<span class="count" id="countDeployment"></span></button>
+      <button class="chip" data-filter="context"><span class="cat-dot"></span>Broader Context<span class="count" id="countContext"></span></button>
+      <button class="chip" data-filter="quickfire"><span class="cat-dot"></span>Quick-Fire<span class="count" id="countQuickfire"></span></button>
+    </div>
+  </div>
+
+  <!-- FAQ CONTENT -->
+  <div id="faqContainer"></div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" id="emptyState">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <p>No questions match your search.</p>
+  </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="page-footer">
+  <p>AIMed 2026 &mdash; Abstract #78 &mdash; ISU XR Laboratory, Istinye University</p>
+  <p style="margin-top:6px;">
+    <a href="https://www.nature.com/articles/s41597-024-03469-9" target="_blank">HVSMR-2.0 Dataset</a> &middot;
+    <a href="https://segchd.csail.mit.edu/" target="_blank">HVSMR Challenge</a> &middot;
+    <a href="https://onnxruntime.ai/" target="_blank">ONNX Runtime</a>
+  </p>
+</footer>
+
+<script>
+// ===== FAQ DATA =====
+const faqData = [
+  // --- DATASET ---
+  {
+    cat: "dataset",
+    section: "Dataset & Clinical Motivation",
+    icon: "🧠",
+    q: "What is HVSMR-2.0?",
+    a: `<p>HVSMR-2.0 (Whole-Heart and Great Vessel Segmentation from 3D Cardiovascular MR) is a publicly available dataset published in <strong>Nature Scientific Data (2024)</strong> by Pace et al. It contains <strong>60 cardiovascular MR scans</strong> from pediatric patients with congenital heart disease (CHD), along with manual segmentation masks of 4 cardiac chambers and 4 great vessels.</p>
+    <p>It builds on the original HVSMR 2016 MICCAI Challenge dataset (20 cases) by adding 40 additional cases covering a wider range of CHD subtypes &mdash; balanced to sample different heart defects and their combinations as uniformly as possible. It is the standard benchmark for pediatric whole-heart segmentation.</p>
+    <p class="citation">Pace DF, Dalca AV, Brosch T, et al. "HVSMR-2.0: A 3D cardiovascular MR dataset for whole-heart segmentation in congenital heart disease." <em>Scientific Data</em>, 2024.</p>`
+  },
+  {
+    cat: "dataset",
+    q: "Isn't 60 volumes a small dataset?",
+    a: `<p>Yes, but this is typical for 3D medical imaging &mdash; manual volumetric annotation is extremely expensive (each case requires expert cardiologist time). HVSMR-2.0 is the <strong>largest publicly available dataset</strong> specifically for pediatric CHD segmentation.</p>
+    <p>Our focus is not beating segmentation SOTA on large datasets &mdash; it's proving that a well-trained model <strong>deploys to cheap hardware without accuracy loss</strong>. The dataset is peer-reviewed, publicly available, and enables direct comparison with published methods.</p>`
+  },
+  {
+    cat: "dataset",
+    q: "What are the 4 segmentation classes?",
+    a: `<table>
+      <thead><tr><th>Class</th><th>Label</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>Background</td><td>Everything outside cardiovascular structures</td></tr>
+        <tr><td>1</td><td>Aorta</td><td>Main artery carrying blood from heart</td></tr>
+        <tr><td>2</td><td>Cardiac Chambers</td><td>Combined left/right ventricles and atria</td></tr>
+        <tr><td>3</td><td>Pulmonary Arteries</td><td>Vessels carrying blood to lungs</td></tr>
+      </tbody>
+    </table>
+    <p>The <strong>Mean FG Dice</strong> of 0.911 averages only the 3 foreground classes (1, 2, 3) &mdash; background is excluded because it's trivially easy (Dice ~0.988).</p>`
+  },
+  {
+    cat: "dataset",
+    q: "Why is C3 Pulmonary the lowest Dice (0.863)?",
+    a: `<p>Pulmonary arteries are the <strong>thinnest and most tortuous</strong> structures with complex branching patterns. Small structures have a worse surface-to-volume ratio, so even a few misclassified voxels disproportionately hurt the Dice score.</p>
+    <p>This is consistent across <strong>all</strong> published HVSMR results &mdash; pulmonary is always the hardest class. In the original HVSMR 2016 challenge, top methods achieved ~0.90 for blood pool but only ~0.73&ndash;0.80 for myocardium (the other hard class).</p>`
+  },
+  {
+    cat: "dataset",
+    q: "How were train/test patients split?",
+    a: `<p>We follow the official HVSMR-2.0 protocol. <strong>5 held-out test patients</strong> (pat55&ndash;pat59) were never seen during training. The same 5 patients were evaluated identically on every hardware configuration.</p>
+    <p>Per-patient Dice ranges from 0.891 (pat58) to 0.926 (pat57).</p>`
+  },
+  {
+    cat: "dataset",
+    q: "Why 128&times;128&times;64 resolution? Isn't that low?",
+    a: `<p>It's a deliberate trade-off for edge deployment. Higher resolution (e.g., 256&sup3;) would require <strong>16&times; more memory</strong> and exceed the 8 GB available on both edge devices.</p>
+    <p>128&times;128&times;64 fits comfortably in RAM while preserving enough anatomical detail for 0.911 Dice. Volumes are resized from original resolution using trilinear interpolation (images) and nearest-neighbor (masks).</p>`
+  },
+  {
+    cat: "dataset",
+    q: "Why does congenital heart disease need edge AI?",
+    a: `<p>CHD affects <strong>9 per 1,000 live births</strong> &mdash; one of the most common birth defects. In resource-limited settings (rural hospitals, mobile screening units, intraoperative theatres) there is no HPC server.</p>
+    <p>Running segmentation on an $80 device at the bedside enables:</p>
+    <ul>
+      <li><strong>Surgical planning</strong> accessible where it currently isn't</li>
+      <li><strong>Patient data never leaves the hospital</strong> &mdash; GDPR/HIPAA compliance by design</li>
+      <li><strong>No internet required</strong> &mdash; works offline in remote areas</li>
+      <li><strong>One-time $80&ndash;$249 cost</strong> vs. ongoing cloud GPU billing</li>
+    </ul>`
+  },
+
+  // --- MODEL ---
+  {
+    cat: "model",
+    section: "Model Architecture (ResUNet-SE)",
+    icon: "🧩",
+    q: "Why ResUNet-SE and not nnU-Net, UNETR, or a transformer?",
+    a: `<table>
+      <thead><tr><th>Model</th><th>Params</th><th>Memory</th><th>Edge-friendly?</th></tr></thead>
+      <tbody>
+        <tr class="highlight-row"><td>ResUNet-SE (ours)</td><td>23.1M</td><td>93 MB</td><td>Yes</td></tr>
+        <tr><td>nnU-Net</td><td>~31M+</td><td>~120 MB+</td><td>Partially</td></tr>
+        <tr><td>UNETR</td><td>~90M+</td><td>~350 MB+</td><td>No</td></tr>
+        <tr><td>SwinUNETR</td><td>~62M+</td><td>~250 MB+</td><td>No</td></tr>
+      </tbody>
+    </table>
+    <p>ResUNet-SE gives strong accuracy (0.911 Dice) at only 23.1M parameters. Transformer-based models require significantly more memory &mdash; impractical for 8 GB shared-memory edge devices. Our priority is <strong>deployability</strong>, not marginal accuracy gains.</p>`
+  },
+  {
+    cat: "model",
+    q: "Explain the architecture in detail.",
+    a: `<pre><code>Input (B, 1, D, H, W) = (B, 1, 64, 128, 128)
+
+[Encoder]
+  enc1: ResidualSEBlock(1 &rarr; 32)    &rarr; skip1
+  MaxPool3d(2)
+  enc2: ResidualSEBlock(32 &rarr; 64)   &rarr; skip2
+  MaxPool3d(2)
+  enc3: ResidualSEBlock(64 &rarr; 128)  &rarr; skip3
+  MaxPool3d(2)
+  enc4: ResidualSEBlock(128 &rarr; 256) &rarr; skip4
+  MaxPool3d(2)
+
+[Bottleneck]
+  ResidualSEBlock(256 &rarr; 512) + Dropout3d(0.1)
+
+[Decoder] (with skip connections)
+  ConvTranspose3d + cat(skip4) &rarr; dec4: ResidualSEBlock(512 &rarr; 256)
+  ConvTranspose3d + cat(skip3) &rarr; dec3: ResidualSEBlock(256 &rarr; 128)
+  ConvTranspose3d + cat(skip2) &rarr; dec2: ResidualSEBlock(128 &rarr; 64)
+  ConvTranspose3d + cat(skip1) &rarr; dec1: ResidualSEBlock(64 &rarr; 32)
+
+[Output] Conv3d(32 &rarr; 4, kernel=1)
+
+[Deep Supervision] (training only)
+  ds_head4: Conv3d(256 &rarr; 4) from dec4
+  ds_head3: Conv3d(128 &rarr; 4) from dec3
+  ds_head2: Conv3d(64 &rarr; 4)  from dec2</code></pre>
+  <p>Feature map sizes: [32, 64, 128, 256, 512] &mdash; doubling at each encoder level.</p>`
+  },
+  {
+    cat: "model",
+    q: "What does Squeeze-and-Excitation (SE) do?",
+    a: `<p>SE blocks perform <strong>adaptive channel-wise feature recalibration</strong>:</p>
+    <ol>
+      <li><strong>Squeeze:</strong> Global average pool spatial dims &rarr; (B, C, 1, 1, 1)</li>
+      <li><strong>Excitation:</strong> Two FC layers (C &rarr; C/4 &rarr; C) with ReLU + Sigmoid learn channel importance weights</li>
+      <li><strong>Scale:</strong> Multiply each channel by its learned weight</li>
+    </ol>
+    <p>This lets the model learn which feature channels are most informative (e.g., "aorta boundary features are more important than background texture"). SE adds <strong>&lt;1% extra parameters</strong>. Reduction ratio = 4 (min 8 channels in bottleneck FC).</p>
+    <p class="citation">Hu J, Shen L, Sun G. "Squeeze-and-Excitation Networks." CVPR, 2018.</p>`
+  },
+  {
+    cat: "model",
+    q: "What is deep supervision and why use it?",
+    a: `<p>Deep supervision adds <strong>auxiliary loss functions at 3 intermediate decoder levels</strong> (dec4, dec3, dec2). Each auxiliary head produces a 4-class segmentation map, trilinearly upsampled to full resolution, and compared against the ground truth.</p>
+    <p><strong>Loss weights:</strong> main=1.0, ds2=0.5, ds3=0.25, ds4=0.125 (normalized).</p>
+    <p>This forces early decoder layers to learn meaningful features. Proven by nnU-Net (Isensee et al., <em>Nature Methods</em> 2021). At inference, only the main head is used &mdash; auxiliary heads add ~0.5 MB but <strong>zero compute cost</strong>.</p>`
+  },
+  {
+    cat: "model",
+    q: "What is EMA (Exponential Moving Average)?",
+    a: `<p>Instead of deploying raw final-epoch weights, EMA maintains a <strong>running weighted average</strong> of all model parameters throughout training:</p>
+    <pre><code>EMA_weight = 0.999 * EMA_weight + 0.001 * current_weight</code></pre>
+    <p>Each update blends 0.1% of current weights with 99.9% of the accumulated average. This <strong>smooths out noisy gradient updates</strong> and produces more robust, generalizable weights. The EMA model is what we save as <code>best_ema_model.pth</code> and deploy everywhere.</p>`
+  },
+  {
+    cat: "model",
+    q: "What is InstanceNorm3d and why not BatchNorm?",
+    a: `<p>InstanceNorm normalizes each sample independently (per-channel, per-sample statistics) rather than across the batch. Critical because:</p>
+    <ul>
+      <li>Our <strong>batch size is only 2</strong> (limited by 3D volume memory)</li>
+      <li>BatchNorm statistics become unreliable at batch_size &lt; 8&ndash;16</li>
+      <li>InstanceNorm is the <strong>nnU-Net convention</strong> and standard for 3D medical segmentation</li>
+      <li>Uses <code>affine=True</code> (learnable scale/shift per channel)</li>
+    </ul>`
+  },
+  {
+    cat: "model",
+    q: "Explain the composite loss function.",
+    a: `<p><strong>Composite loss:</strong> <code>0.4 &times; Dice + 0.4 &times; Focal Tversky + 0.2 &times; Cross-Entropy</code></p>
+    <table>
+      <thead><tr><th>Component</th><th>Role</th><th>Details</th></tr></thead>
+      <tbody>
+        <tr><td>Dice Loss</td><td>Class imbalance</td><td>Foreground-only (skips class 0). Directly optimizes reported metric.</td></tr>
+        <tr><td>Focal Tversky</td><td>Penalize FN</td><td>&alpha;=0.7, &beta;=0.3, &gamma;=0.75. FN penalized 2.3&times; more than FP &mdash; critical for thin pulmonary arteries.</td></tr>
+        <tr><td>Cross-Entropy</td><td>Stable gradients</td><td>Reliable per-voxel gradients early in training when Dice gradients are noisy.</td></tr>
+      </tbody>
+    </table>
+    <p class="citation">Abraham N, Khan NM. "A Novel Focal Tversky Loss Function with Improved Attention U-Net." ISBI, 2019.</p>`
+  },
+  {
+    cat: "model",
+    q: "What data augmentation do you use?",
+    a: `<p>All augmentations applied online via <strong>TorchIO</strong> during training:</p>
+    <table>
+      <thead><tr><th>Augmentation</th><th>Parameters</th></tr></thead>
+      <tbody>
+        <tr><td>Random Flip</td><td>All 3 axes, p=0.5 each</td></tr>
+        <tr><td>Random Affine</td><td>Scale 0.95&ndash;1.05, rotation &plusmn;10&deg;, translation &plusmn;5 voxels</td></tr>
+        <tr><td>Elastic Deformation</td><td>5 control points, max displacement 5.0</td></tr>
+        <tr><td>Random Noise</td><td>Gaussian, std 0&ndash;0.03</td></tr>
+        <tr><td>Random Bias Field</td><td>Coefficients 0.3 (simulates MRI inhomogeneity)</td></tr>
+        <tr><td>Random Gamma</td><td>log_gamma &minus;0.2 to 0.2</td></tr>
+        <tr><td>Clamp</td><td>Output clamped to [0, 1]</td></tr>
+      </tbody>
+    </table>`
+  },
+  {
+    cat: "model",
+    q: "What optimizer and learning rate schedule?",
+    a: `<ul>
+      <li><strong>AdamW</strong> (lr=1e-4, weight_decay=1e-5)</li>
+      <li><strong>Linear warmup</strong> for first 50 epochs (0.01 &rarr; 1.0)</li>
+      <li><strong>Cosine annealing</strong> for remaining 2450 epochs (down to min_lr=1e-7)</li>
+      <li><strong>Gradient clipping</strong> at max_norm=12 (nnU-Net default)</li>
+      <li><strong>Mixed precision (AMP)</strong> with proper unscale-before-clip</li>
+      <li><strong>Total: 2500 epochs</strong></li>
+    </ul>`
+  },
+
+  // --- RESULTS ---
+  {
+    cat: "results",
+    section: "Results & Why Accuracy is Identical",
+    icon: "📈",
+    q: "Why are Dice scores identical across all 5 rows in Table 1?",
+    a: `<p>Neural network inference is a <strong>deterministic mathematical operation</strong>. A trained model is a fixed set of weight matrices. Same weights &times; same input = same output &mdash; regardless of whether computations run on a V100 GPU, Jetson ARM GPU, or Raspberry Pi CPU.</p>
+    <p>The hardware only affects <strong>how fast</strong> the math runs and <strong>how much RAM</strong> is consumed. ONNX export preserves this because it serializes the exact same computation graph and float32 weights.</p>`
+  },
+  {
+    cat: "results",
+    q: "So what's the point of the table if accuracy doesn't change?",
+    a: `<p><strong>That IS the point.</strong> The table proves that edge deployment introduces a <strong>latency&ndash;cost trade-off, not an accuracy trade-off</strong>.</p>
+    <blockquote>You can deploy this model to an $80 Raspberry Pi in a rural clinic and get the exact same segmentation quality as a $50,000 HPC server. The only difference is you wait 11 seconds instead of 24 milliseconds.</blockquote>`
+  },
+  {
+    cat: "results",
+    q: "Could there be tiny floating-point differences you're not showing?",
+    a: `<p>In theory, yes &mdash; different hardware can produce float32 rounding differences at the ~10<sup>&minus;7</sup> level due to different FMA (fused multiply-add) implementations. But when we round to 3 decimal places (standard for Dice reporting), these vanish. All configurations match to <strong>3 decimal places</strong> across all 5 test patients.</p>`
+  },
+  {
+    cat: "results",
+    q: "Did you test TTA on the edge devices?",
+    a: `<p>No. Edge benchmarks use <strong>single forward pass</strong> (no TTA). HPC evaluation used 8-way flip TTA. However, HPC with TTA (0.911) matches edge without TTA (0.911) &mdash; showing <strong>TTA has minimal impact</strong> for this well-trained model.</p>
+    <p>This is actually good news: TTA would multiply latency by 8&times; on edge devices, making it impractical.</p>`
+  },
+  {
+    cat: "results",
+    q: "Who is Patient 57 and why show that one?",
+    a: `<p>Patient 57 has the <strong>highest Mean FG Dice (0.926)</strong> among our 5 test patients:</p>
+    <table>
+      <thead><tr><th>Patient</th><th>C1 Aorta</th><th>C2 Chambers</th><th>C3 Pulmonary</th><th>Mean FG</th></tr></thead>
+      <tbody>
+        <tr><td>pat55</td><td>0.946</td><td>0.944</td><td>0.859</td><td>0.916</td></tr>
+        <tr><td>pat56</td><td>0.942</td><td>0.934</td><td>0.874</td><td>0.917</td></tr>
+        <tr class="highlight-row"><td>pat57</td><td>0.931</td><td>0.947</td><td>0.901</td><td>0.926</td></tr>
+        <tr><td>pat58</td><td>0.928</td><td>0.903</td><td>0.843</td><td>0.891</td></tr>
+        <tr><td>pat59</td><td>0.918</td><td>0.953</td><td>0.837</td><td>0.903</td></tr>
+      </tbody>
+    </table>
+    <p>Pat57 also has the best pulmonary artery result (0.901) &mdash; our hardest class.</p>`
+  },
+  {
+    cat: "results",
+    q: "What does the pixel error map show?",
+    a: `<p>A <strong>voxel-wise comparison</strong> between predicted and ground-truth masks:</p>
+    <table>
+      <thead><tr><th>Color</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>Black</td><td>True Negative (correctly predicted background)</td></tr>
+        <tr><td>Class color</td><td>True Positive (correctly predicted that class)</td></tr>
+        <tr><td>Distinct hue 1</td><td>False Positive (predicted structure that isn't there)</td></tr>
+        <tr><td>Distinct hue 2</td><td>False Negative (missed structure that is there)</td></tr>
+        <tr><td>Distinct hue 3</td><td>Misclassification (predicted wrong class)</td></tr>
+      </tbody>
+    </table>
+    <p>Errors concentrate at <strong>structure boundaries</strong> and thin branch tips of pulmonary arteries.</p>`
+  },
+  {
+    cat: "results",
+    q: "Why log scale on the latency chart (Figure 4)?",
+    a: `<p>Latency ranges from 24 ms (HPC) to 102.6 s &mdash; a <strong>4,275&times; range</strong>. On a linear scale, the HPC and Jetson GPU bars would be invisible (&lt;1 pixel). Log scale lets you visually compare all 5 configurations and see relative speedups.</p>`
+  },
+  {
+    cat: "results",
+    q: "How does 0.911 Dice compare to state of the art?",
+    a: `<p>On the original HVSMR 2016 challenge (different class definition &mdash; blood pool + myocardium), top methods achieved:</p>
+    <ul>
+      <li>Blood pool Dice: ~0.90&ndash;0.92</li>
+      <li>Myocardium Dice: ~0.73&ndash;0.83</li>
+    </ul>
+    <p>Our 0.911 on HVSMR-2.0 (newer 4-class definition) is competitive. But <strong>our contribution is not beating segmentation SOTA</strong> &mdash; it's proving that an already-strong model deploys to edge hardware with zero degradation.</p>`
+  },
+
+  // --- DEPLOYMENT ---
+  {
+    cat: "deployment",
+    section: "Edge Deployment Details",
+    icon: "🔧",
+    q: "What exactly are these edge devices?",
+    a: `<table>
+      <thead><tr><th>Spec</th><th>Raspberry Pi 5</th><th>Jetson Orin Nano</th></tr></thead>
+      <tbody>
+        <tr><td>Cost</td><td>~$80</td><td>~$249</td></tr>
+        <tr><td>CPU</td><td>4-core Cortex-A76 @ 2.4 GHz</td><td>6-core Cortex-A78AE @ 1.7 GHz</td></tr>
+        <tr><td>GPU</td><td>None</td><td>1024-core NVIDIA Ampere</td></tr>
+        <tr><td>RAM</td><td>8 GB LPDDR4X (dedicated)</td><td>8 GB LPDDR5 (unified)</td></tr>
+        <tr><td>OS</td><td>Raspberry Pi OS (aarch64)</td><td>Ubuntu 22.04 + JetPack 6.2</td></tr>
+        <tr><td>Power</td><td>~25W max</td><td>7&ndash;25W configurable</td></tr>
+      </tbody>
+    </table>`
+  },
+  {
+    cat: "deployment",
+    q: "What is ONNX and why does it make the Pi 9.2&times; faster?",
+    a: `<p>ONNX (Open Neural Network Exchange) is a hardware-agnostic model format. We export the PyTorch model to ONNX, which serializes the computation graph as a static file.</p>
+    <p><strong>ONNX Runtime</strong> executes that graph with heavily optimized CPU kernels:</p>
+    <ul>
+      <li><strong>ARM NEON SIMD</strong> vectorized operations (4 floats per instruction)</li>
+      <li><strong>Graph optimizations:</strong> operator fusion, constant folding, memory planning</li>
+      <li><strong>Optimized thread scheduling</strong> for multi-core ARM</li>
+    </ul>
+    <p>Raw PyTorch on CPU carries overhead (dynamic graph, autograd engine, Python GIL). ONNX Runtime strips all that away: <strong>102.6s &rarr; 11.1s = 9.2&times; speedup</strong>.</p>`
+  },
+  {
+    cat: "deployment",
+    q: "Why is the Pi 5 so much slower than the Jetson?",
+    a: `<p>3D convolutions are <strong>massively parallel operations</strong> &mdash; each output voxel requires hundreds of multiply-accumulate ops. The Pi 5 has 4 CPU cores processing sequentially. The Jetson has <strong>1024 GPU cores</strong> processing thousands of operations simultaneously.</p>
+    <p>Fundamental difference: 4 cores doing serial work vs. 1024 cores doing parallel work. Plus Jetson uses faster LPDDR5 memory bandwidth.</p>`
+  },
+  {
+    cat: "deployment",
+    q: "Why does the Pi use more RAM with ONNX (3.6 GB) than PyTorch (1.95 GB)?",
+    a: `<p>ONNX Runtime <strong>pre-allocates intermediate activation buffers</strong> for the entire computation graph upfront (for optimization). PyTorch computes lazily and can reuse/free memory as it goes.</p>
+    <p>More RAM doesn't mean worse &mdash; it's ONNX's trade-off: <strong>use more memory to run faster</strong>.</p>`
+  },
+  {
+    cat: "deployment",
+    q: "102.6 seconds on the Pi &mdash; is that clinically useful?",
+    a: `<p>On its own with PyTorch, no. But with ONNX it drops to <strong>11.1 seconds</strong>, acceptable for:</p>
+    <ul>
+      <li>Non-urgent screening (radiologist reviews batched scans)</li>
+      <li>Overnight batch processing of a day's cases</li>
+      <li>Pre-operative planning where minutes are acceptable</li>
+    </ul>
+    <p>The Jetson at <strong>320 ms</strong> is practical for interactive workflows. For true real-time, TensorRT FP16 achieves <strong>193 ms</strong>.</p>`
+  },
+  {
+    cat: "deployment",
+    q: "Why didn't you include TensorRT results in the poster?",
+    a: `<p>TensorRT FP16 achieves <strong>193 ms</strong> &mdash; our strongest result. But the submitted abstract only reports 5 configurations. We kept the poster consistent for integrity.</p>
+    <p><strong>Full results (if asked):</strong></p>
+    <table>
+      <thead><tr><th>Device</th><th>Backend</th><th>Latency</th><th>vs HPC</th></tr></thead>
+      <tbody>
+        <tr><td>HPC (V100)</td><td>PyTorch GPU</td><td>24 ms</td><td>1&times; (ref)</td></tr>
+        <tr class="highlight-row"><td>Jetson</td><td>TensorRT FP16</td><td>193 ms</td><td>8.0&times;</td></tr>
+        <tr><td>Jetson</td><td>TensorRT FP32</td><td>303 ms</td><td>12.6&times;</td></tr>
+        <tr><td>Jetson</td><td>PyTorch GPU</td><td>320 ms</td><td>13.3&times;</td></tr>
+        <tr><td>Jetson</td><td>ONNX CPU</td><td>6.8 s</td><td>283&times;</td></tr>
+        <tr><td>Pi 5</td><td>ONNX CPU</td><td>11.1 s</td><td>462&times;</td></tr>
+        <tr><td>Pi 5</td><td>PyTorch CPU</td><td>102.6 s</td><td>4,275&times;</td></tr>
+      </tbody>
+    </table>
+    <p>All 7 configurations: <strong>identical Dice (0.911)</strong>.</p>`
+  },
+  {
+    cat: "deployment",
+    q: "Doesn't TensorRT FP16 (half precision) lose accuracy?",
+    a: `<p><strong>Pure FP16 causes accuracy collapse</strong> &mdash; the model predicts all-background (Dice = 0). This happens because <strong>InstanceNorm3d</strong> and <strong>SE layers</strong> are numerically sensitive to float16 range limitations.</p>
+    <p>The fix: <strong>mixed precision</strong> &mdash; 126 sensitive layers (norms, SE pooling/FC, ReduceMean) forced to FP32 while Conv3d runs in FP16. This preserves identical Dice while achieving 1.5&times; speedup. Engine size shrinks from 93 MB to <strong>47.8 MB</strong>.</p>
+    <p>Engines are built from ONNX on first run (~8 min) and cached for instant loading (0.16s).</p>`
+  },
+  {
+    cat: "deployment",
+    q: "What about thermal behavior under load?",
+    a: `<table>
+      <thead><tr><th>Device</th><th>Temp Under Load</th><th>Concern?</th></tr></thead>
+      <tbody>
+        <tr><td>HPC Server</td><td>N/A (data center cooling)</td><td>No</td></tr>
+        <tr><td>Jetson Orin Nano</td><td>45&ndash;52&deg;C</td><td>No &mdash; well within safe range</td></tr>
+        <tr><td>Raspberry Pi 5</td><td>81&ndash;88&deg;C</td><td><strong>Yes</strong> &mdash; approaches 85&deg;C throttling</td></tr>
+      </tbody>
+    </table>
+    <p>Pi 5 needs an <strong>active cooler</strong> for sustained workloads. The Jetson's heatsink keeps it stable &mdash; designed for sustained AI.</p>`
+  },
+  {
+    cat: "deployment",
+    q: "How did you transfer the model to edge devices?",
+    a: `<ol>
+      <li>Train on HPC (NVIDIA Tesla V100) &rarr; save <code>best_ema_model.pth</code> (93 MB)</li>
+      <li>Export to ONNX: <code>python export_to_onnx.py --model best_ema_model.pth --output resunet3d.onnx</code></li>
+      <li>SCP transfer to device: <code>scp resunet3d.onnx user@device:~/unet_deploy/</code></li>
+      <li>Run: <code>python3 pi_inference.py --model-type advanced --onnx-model resunet3d.onnx</code></li>
+    </ol>
+    <p>Same <code>.pth</code> and <code>.onnx</code> files work on <strong>both devices</strong> without modification.</p>`
+  },
+  {
+    cat: "deployment",
+    q: "Could this run on a phone or Apple Silicon?",
+    a: `<p>In principle, yes. ONNX Runtime supports iOS (CoreML EP), Android (NNAPI EP), and Apple Silicon (CPU + Metal). The model is only 93 MB &mdash; well within phone capabilities.</p>
+    <p>Modern phones (A17 Pro, Snapdragon 8 Gen 3) have NPUs that could potentially match the Jetson. Natural extension for future work.</p>`
+  },
+
+  // --- CONTEXT ---
+  {
+    cat: "context",
+    section: "Broader Context & Best Paper Jury",
+    icon: "🌐",
+    q: "What is the novelty of this work?",
+    a: `<p>Most medical segmentation papers stop at "we trained a model, here's the Dice." We go three steps further:</p>
+    <ol>
+      <li><strong>ONNX export</strong> with verified numerical equivalence</li>
+      <li><strong>Physical deployment</strong> on real $80&ndash;$249 hardware (not simulation)</li>
+      <li><strong>Comprehensive benchmarking:</strong> latency, memory, thermal, per-class accuracy across 5+ configurations</li>
+    </ol>
+    <p>The combination of <strong>3D volumetric segmentation on real edge hardware with zero Dice degradation</strong> is rare. Most edge medical AI is 2D classification or accepts accuracy loss.</p>`
+  },
+  {
+    cat: "context",
+    q: "How does this compare to other edge AI medical imaging work?",
+    a: `<table>
+      <thead><tr><th>Study</th><th>Task</th><th>Dim</th><th>Device</th><th>Accuracy Impact</th></tr></thead>
+      <tbody>
+        <tr class="highlight-row"><td>Ours</td><td>Cardiac seg</td><td>3D</td><td>Pi 5 + Jetson</td><td>Zero loss</td></tr>
+        <tr><td>Nested U-Net (2024)</td><td>Lesion seg</td><td>2D</td><td>Raspberry Pi</td><td>Some degradation</td></tr>
+        <tr><td>Edge brain MRI (2024)</td><td>Classif + seg</td><td>2D</td><td>Jetson Xavier NX</td><td>Comparable</td></tr>
+        <tr><td>MedMambaLite (2025)</td><td>Classification</td><td>2D</td><td>Jetson + Pi 5</td><td>63&ndash;74% energy savings</td></tr>
+      </tbody>
+    </table>
+    <p>3D volumes are far more demanding than 2D slices, and we show <strong>zero</strong> accuracy loss &mdash; not just "comparable."</p>`
+  },
+  {
+    cat: "context",
+    q: "Why not just use cloud inference?",
+    a: `<p>Three reasons:</p>
+    <ol>
+      <li><strong>Privacy:</strong> DICOM data leaving the hospital raises GDPR/HIPAA concerns. Edge = data never leaves the device.</li>
+      <li><strong>Connectivity:</strong> Rural hospitals and mobile units may lack reliable internet.</li>
+      <li><strong>Cost:</strong> Cloud GPU inference costs ~$0.50&ndash;2.00 per call. An $80 Pi 5 is a one-time purchase.</li>
+    </ol>`
+  },
+  {
+    cat: "context",
+    q: "What are the limitations?",
+    a: `<ol>
+      <li><strong>Single dataset:</strong> Only HVSMR-2.0. Generalization to ACDC, M&amp;Ms not validated.</li>
+      <li><strong>No model compression:</strong> No INT8 quantization, pruning, or distillation applied.</li>
+      <li><strong>Pi 5 not real-time:</strong> 11.1s usable but not interactive.</li>
+      <li><strong>Small test set:</strong> Only 5 held-out patients &mdash; limited statistical power.</li>
+      <li><strong>No clinical validation:</strong> Technical feasibility proven, no radiologist evaluation.</li>
+      <li><strong>ONNX kernel overhead on ARM:</strong> Platform-specific optimization (ARM Kleidi kernels) could help.</li>
+    </ol>`
+  },
+  {
+    cat: "context",
+    q: "What is the future work?",
+    a: `<table>
+      <thead><tr><th>Direction</th><th>Expected Impact</th></tr></thead>
+      <tbody>
+        <tr><td>INT8 quantization</td><td>~2&times; speedup, ~4&times; model size reduction</td></tr>
+        <tr><td>Knowledge distillation</td><td>Smaller student model (~5M params)</td></tr>
+        <tr><td>TensorRT FP16</td><td>Already done (193 ms) &mdash; not in abstract</td></tr>
+        <tr><td>On-device Grad-CAM</td><td>Clinicians see WHY model predicted</td></tr>
+        <tr><td>Multi-dataset validation</td><td>ACDC, M&amp;Ms, larger cohorts</td></tr>
+        <tr><td>Clinical pilot</td><td>Real hospital deployment + radiologist feedback</td></tr>
+      </tbody>
+    </table>`
+  },
+  {
+    cat: "context",
+    q: "Can this be used in a real clinical setting today?",
+    a: `<p>Not without <strong>regulatory approval</strong> (CE marking in EU, FDA 510(k) in US). But the technical barrier is solved. Remaining steps:</p>
+    <ol>
+      <li>Clinical validation on a larger multi-center dataset</li>
+      <li>Radiologist evaluation of clinical utility</li>
+      <li>Regulatory submission</li>
+      <li>Integration into clinical workflow (PACS, DICOM)</li>
+    </ol>`
+  },
+  {
+    cat: "context",
+    q: "How can someone reproduce your results?",
+    a: `<ul>
+      <li><strong>Dataset:</strong> HVSMR-2.0 is publicly available (<a href="https://segchd.csail.mit.edu/" target="_blank" style="color:var(--blue-4)">segchd.csail.mit.edu</a>)</li>
+      <li><strong>Model code:</strong> ResidualSEUNet3D with all training configs</li>
+      <li><strong>Inference:</strong> Unified <code>pi_inference.py</code> supporting PyTorch, ONNX, TensorRT</li>
+      <li><strong>Hardware:</strong> Pi 5 ($80) and Jetson Orin Nano ($249) &mdash; commercially available</li>
+    </ul>`
+  },
+  {
+    cat: "context",
+    q: "Why these specific reference papers [1]&ndash;[8]?",
+    a: `<table>
+      <thead><tr><th>Ref</th><th>Why cited</th></tr></thead>
+      <tbody>
+        <tr><td>[1] van der Linde, JACC 2011</td><td>CHD prevalence: 9 per 1,000 births</td></tr>
+        <tr><td>[2] Pace, MICCAI 2015</td><td>The dataset we use</td></tr>
+        <tr><td>[3] Ronneberger, MICCAI 2015</td><td>Foundation U-Net architecture</td></tr>
+        <tr><td>[4] Isensee, Nat Methods 2021</td><td>nnU-Net training conventions</td></tr>
+        <tr><td>[5] Kaissis, Nat Mach Intell 2021</td><td>Privacy-preserving ML in healthcare</td></tr>
+        <tr><td>[6] Hu, CVPR 2018</td><td>Squeeze-and-Excitation mechanism</td></tr>
+        <tr><td>[7] Abraham, ISBI 2019</td><td>Focal Tversky loss function</td></tr>
+        <tr><td>[8] ONNX Runtime v1.24.2</td><td>Edge inference engine</td></tr>
+      </tbody>
+    </table>`
+  },
+
+  // --- QUICKFIRE ---
+  {
+    cat: "quickfire",
+    section: "Quick-Fire Answers (30 seconds)",
+    icon: "⚡",
+    q: "\"What's your main contribution?\"",
+    a: `<blockquote>We prove that 3D cardiac segmentation deploys to an $80 device with zero accuracy loss &mdash; the trade-off is only speed, not quality.</blockquote>`
+  },
+  {
+    cat: "quickfire",
+    q: "\"Why should a clinician care?\"",
+    a: `<blockquote>Accurate cardiac segmentation for surgical planning, anywhere, offline, for $80, with patient data never leaving the building.</blockquote>`
+  },
+  {
+    cat: "quickfire",
+    q: "\"What's the best number on your poster?\"",
+    a: `<blockquote>0.911 Dice preserved across all devices &mdash; especially the $80 Raspberry Pi 5 at 11.1 seconds with ONNX Runtime.</blockquote>`
+  },
+  {
+    cat: "quickfire",
+    q: "\"If you had 6 more months, what would you do?\"",
+    a: `<blockquote>INT8 quantization + knowledge distillation to get a smaller model running in under 1 second on the Pi, then a clinical pilot with radiologists.</blockquote>`
+  },
+  {
+    cat: "quickfire",
+    q: "\"What surprised you most?\"",
+    a: `<blockquote>That ONNX Runtime gave a 9.2&times; speedup on the Pi 5 with zero code changes &mdash; just a format conversion. Also that TensorRT FP16 needed 126 layers forced to FP32 to avoid accuracy collapse from InstanceNorm sensitivity.</blockquote>`
+  },
+  {
+    cat: "quickfire",
+    q: "\"Is this novel?\"",
+    a: `<blockquote>3D volumetric segmentation on real physical edge devices with zero accuracy degradation &mdash; yes. Most edge medical AI work is 2D classification or accepts accuracy loss.</blockquote>`
+  },
+];
+
+// ===== RENDER =====
+const container = document.getElementById('faqContainer');
+const searchInput = document.getElementById('searchInput');
+const searchCount = document.getElementById('searchCount');
+const emptyState = document.getElementById('emptyState');
+const filters = document.getElementById('filters');
+
+let activeFilter = 'all';
+let qIndex = 0;
+
+function renderFAQ(data) {
+  container.innerHTML = '';
+  let currentSection = '';
+  let visibleCount = 0;
+  qIndex = 0;
+
+  data.forEach((item, i) => {
+    if (item.section && item.section !== currentSection) {
+      currentSection = item.section;
+      const h = document.createElement('div');
+      h.className = 'section-header';
+      h.dataset.cat = item.cat;
+      const catItems = data.filter(d => d.cat === item.cat);
+      h.innerHTML = `<div class="section-icon">${item.icon}</div><h2>${item.section}</h2><span class="section-count">${catItems.length} questions</span>`;
+      container.appendChild(h);
+    }
+
+    qIndex++;
+    const card = document.createElement('div');
+    card.className = 'faq-card';
+    card.dataset.cat = item.cat;
+    card.dataset.q = item.q.toLowerCase();
+    card.dataset.a = item.a.replace(/<[^>]*>/g, '').toLowerCase();
+    card.innerHTML = `
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        <div class="q-icon">Q${qIndex}</div>
+        <h3>${item.q}</h3>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">${item.a}</div>
+    `;
+    container.appendChild(card);
+    visibleCount++;
+  });
+
+  return visibleCount;
+}
+
+function updateCounts() {
+  const cats = { all: 0, dataset: 0, model: 0, results: 0, deployment: 0, context: 0, quickfire: 0 };
+  faqData.forEach(item => { cats[item.cat]++; cats.all++; });
+  document.getElementById('countAll').textContent = cats.all;
+  document.getElementById('countDataset').textContent = cats.dataset;
+  document.getElementById('countModel').textContent = cats.model;
+  document.getElementById('countResults').textContent = cats.results;
+  document.getElementById('countDeployment').textContent = cats.deployment;
+  document.getElementById('countContext').textContent = cats.context;
+  document.getElementById('countQuickfire').textContent = cats.quickfire;
+}
+
+function filterAndSearch() {
+  const query = searchInput.value.toLowerCase().trim();
+  let filtered = faqData;
+
+  if (activeFilter !== 'all') {
+    filtered = filtered.filter(item => item.cat === activeFilter);
+  }
+
+  if (query) {
+    filtered = filtered.filter(item => {
+      const text = (item.q + ' ' + item.a.replace(/<[^>]*>/g, '')).toLowerCase();
+      return text.includes(query);
+    });
+  }
+
+  const count = renderFAQ(filtered);
+  searchCount.textContent = query ? `${count} found` : '';
+  emptyState.classList.toggle('visible', count === 0);
+}
+
+// Chip clicks
+filters.addEventListener('click', (e) => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  filters.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  activeFilter = chip.dataset.filter;
+  filterAndSearch();
+});
+
+// Search
+searchInput.addEventListener('input', filterAndSearch);
+
+// Keyboard shortcut: / to focus search
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement !== searchInput) {
+    e.preventDefault();
+    searchInput.focus();
+  }
+  if (e.key === 'Escape') {
+    searchInput.value = '';
+    searchInput.blur();
+    filterAndSearch();
+  }
+});
+
+// Init
+updateCounts();
+renderFAQ(faqData);
+</script>
+
+</body>
+</html>
