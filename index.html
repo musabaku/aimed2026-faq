@@ -547,13 +547,64 @@ body::before {
 
 .page-footer a:hover { text-decoration: underline; }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 640px) {
-  .hero { padding: 40px 16px 28px; }
+/* ===== RESPONSIVE — TABLET ===== */
+@media (max-width: 768px) {
+  .hero { padding: 44px 20px 32px; }
+  .hero h1 { font-size: 26px; }
   .container { padding: 20px 16px 60px; }
-  .faq-a { padding-left: 20px; }
+  .stats-bar { grid-template-columns: repeat(3, 1fr); }
+  .faq-a { padding: 0 16px 16px 44px; }
+  .faq-a pre { font-size: 11px; padding: 10px 12px; }
+}
+
+/* ===== RESPONSIVE — MOBILE ===== */
+@media (max-width: 480px) {
+  .hero { padding: 32px 14px 24px; }
+  .hero-badge { font-size: 10px; padding: 5px 10px; }
+  .hero h1 { font-size: 21px; line-height: 1.2; }
+  .hero-sub { font-size: 13px; }
+  .hero-meta { flex-direction: column; align-items: center; gap: 6px; font-size: 12px; }
+
   .stats-bar { grid-template-columns: repeat(2, 1fr); }
-  .hero-meta { flex-direction: column; align-items: center; gap: 8px; }
+  .stat-item { padding: 14px 12px; }
+  .stat-value { font-size: 22px; }
+  .stat-label { font-size: 9.5px; }
+
+  .container { padding: 14px 10px 60px; }
+
+  .search-wrap { padding: 10px 0; }
+  .search-input { padding: 12px 12px 12px 40px; font-size: 14px; border-radius: 10px; }
+  .search-box svg { left: 12px; }
+  .search-count { right: 12px; font-size: 11px; }
+
+  .filters { gap: 6px; }
+  .chip { padding: 6px 10px; font-size: 11.5px; border-radius: 16px; }
+  .chip .count { font-size: 10px; padding: 1px 5px; }
+
+  .section-header { margin: 28px 0 12px; padding-bottom: 10px; gap: 8px; }
+  .section-header h2 { font-size: 15px; }
+  .section-icon { width: 30px; height: 30px; font-size: 15px; }
+  .section-header .section-count { font-size: 11px; }
+
+  .faq-card { border-radius: 10px; margin-bottom: 6px; }
+  .faq-q { padding: 14px 14px; gap: 10px; }
+  .faq-q .q-icon { width: 24px; height: 24px; font-size: 11px; border-radius: 5px; }
+  .faq-q h3 { font-size: 13.5px; line-height: 1.4; }
+  .faq-q .chevron { width: 18px; height: 18px; }
+
+  .faq-a { padding: 0 14px 16px 14px; font-size: 13px; line-height: 1.65; }
+  .faq-a blockquote { padding: 10px 12px; font-size: 12.5px; }
+  .faq-a code { font-size: 11px; padding: 1px 5px; }
+  .faq-a pre { font-size: 10.5px; padding: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  .faq-a table { font-size: 11px; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .faq-a th { padding: 6px 8px; font-size: 9.5px; white-space: nowrap; }
+  .faq-a td { padding: 5px 8px; white-space: nowrap; }
+
+  .faq-a ul, .faq-a ol { padding-left: 16px; }
+  .faq-a li { margin-bottom: 3px; }
+
+  .page-footer { padding: 24px 14px; font-size: 12px; }
 }
 
 /* ===== ANIMATIONS ===== */
